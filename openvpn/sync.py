@@ -1,6 +1,9 @@
 #-*-coding:utf-8-*-
 import paramiko,re,datetime
-from openvpn.models import OnlineUser,UserList,ServerList,UserLoginHistory
+from openvpn.models import OnlineUser,ServerList
+import os,django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_name.settings")# project_name 项目名称
+django.setup()
 
 def human_readable_time(t):#时间转码
     if t < 86400:
@@ -28,7 +31,7 @@ def sshclient_execmd(hostname, port, username, password, execmd):#创建ssh连�
 	s.close()
 
 
-def sshexec():#获取数据并整理
+def sync():#获取数据并整理
 	hosts = []
 	for i in ServerList.objects.all().values('serverip'):
 		hosts.append(i['serverip'])
