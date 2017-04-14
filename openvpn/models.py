@@ -7,10 +7,12 @@ from django.db import models
 class ServerList(models.Model):
 	serverip = models.GenericIPAddressField('服务器ip',protocol='ipv4',unpack_ipv4=False)
 	serverdomain = models.CharField('服务器域名',max_length=30,default="NULL")
+	enable = models.BooleanField('启用',default=True)
 
 class UserList(models.Model):
 	username = models.CharField('用户名', max_length=20, default="NULL")
-	validserver =
+	validserver = models.IntegerField('允许列表',max_length=2,default="NULL")
+	isfreeze = models.BooleanField('冻结',default=True)
 
 class OnlineUser(models.Model):
 	serverip = models.GenericIPAddressField('服务器ip',protocol='ipv4',unpack_ipv4=False)
