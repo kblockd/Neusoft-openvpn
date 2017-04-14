@@ -29,13 +29,17 @@ def sshclient_execmd(hostname, port, username, password, execmd):#创建ssh连�
 
 
 def sshexec():#获取数据并整理
-	hosts = ServerList
+	hosts = []
+	for i in ServerList.objects.all().values('serverip'):
+		hosts.append(i['serverip'])
 	port = 22
-	username = 'root'
+	syncname = 'root'
 	password = 'neusoft'
 	execmd = "cat /etc/openvpn/openvpn-status.log"
+
+	querysetlist = []
 	for host in hosts:
-		log = sshclient_execmd(host, port, username, password, execmd)
+		log = sshclient_execmd(host, port, syncname, password, execmd)
 		find_lst = re.findall('Virtual Address,Common Name,Real Address,Last Ref(.*?)GLOBAL STATS', log, re.S)
 		if len(find_lst):
 			for item in find_lst:
@@ -50,12 +54,12 @@ def sshexec():#获取数据并整理
 						user_login_time = datetime.datetime.strptime(user_login_time, '%a %b %d %H:%M:%S %Y').strftime('%Y-%m-%d %H:%M:%S')
 						user_uptime = (datetime.datetime.now() - datetime.datetime.strptime(user_login_time,'%Y-%m-%d %H:%M:%S')).seconds
 						user_uptime = human_readable_time(user_uptime)
-						print 'username: '+username
-						print 'client_from_addr: '+client_from_addr
-						print 'client_addr:  '+ client_addr
-						print 'user_login_time:  '+user_login_time
-						print 'user_uptime:  '+user_uptime
-						print '-----------------------------------'
+						querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+	try:
+		SubIp.objects.bulk_create(querysetlist)
+		return 'Success'
+	except Exception, e:
+		return 'False'
 
 
 if __name__ == "__main__":
