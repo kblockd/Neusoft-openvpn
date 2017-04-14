@@ -1,5 +1,6 @@
 #-*-coding:utf-8-*-
 import paramiko,re,datetime
+from openvpn.models import OnlineUser,UserList,ServerList,UserLoginHistory
 
 def human_readable_time(t):#时间转码
     if t < 86400:
@@ -28,7 +29,7 @@ def sshclient_execmd(hostname, port, username, password, execmd):#创建ssh连�
 
 
 def sshexec():#获取数据并整理
-	hosts = ['172.17.4.42']
+	hosts = ServerList
 	port = 22
 	username = 'root'
 	password = 'neusoft'
