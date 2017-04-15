@@ -20,7 +20,7 @@ class OnlineUser(models.Model):
 	fromip = models.GenericIPAddressField('来源ip',protocol='ipv4',unpack_ipv4=False)
 	indoorip = models.GenericIPAddressField('内部ip',protocol='ipv4',unpack_ipv4=False)
 	userlogintime = models.CharField('登录时间',max_length=30,default="NULL")
-	useruptime = models.CharField('在线时长',max_length=10,default="NULL")
+	useruptime = models.CharField('在线时长',max_length=15,default="NULL")
 
 class UserLoginHistory(models.Model):
 	server = models.GenericIPAddressField('服务器ip',protocol='ipv4',unpack_ipv4=False)

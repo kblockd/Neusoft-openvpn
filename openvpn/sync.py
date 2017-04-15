@@ -1,9 +1,9 @@
 #-*-coding:utf-8-*-
+#import os,django
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpn.settings")# project_name 项目名称
+#django.setup()
 import paramiko,re,datetime
 from openvpn.models import OnlineUser,ServerList
-import os,django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_name.settings")# project_name 项目名称
-django.setup()
 
 def human_readable_time(t):#时间转码
     if t < 86400:
@@ -41,6 +41,11 @@ def sync():#获取数据并整理
 	execmd = "cat /etc/openvpn/openvpn-status.log"
 
 	querysetlist = []
+	querydeletelist = []
+	Onlinelist = []
+	TrueOnlineUserList = []
+	for i in OnlineUser.objects.all().values('username'):
+		Onlinelist.append(i['username'])
 	for host in hosts:
 		log = sshclient_execmd(host, port, syncname, password, execmd)
 		find_lst = re.findall('Virtual Address,Common Name,Real Address,Last Ref(.*?)GLOBAL STATS', log, re.S)
@@ -52,18 +57,30 @@ def sync():#获取数据并整理
 						user_log = line.strip().split(',')
 						client_addr = ''.join(user_log[:1])
 						username = ''.join(user_log[1:2])
+						TrueOnlineUserList.append(username)
 						client_from_addr = re.search(r'\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}', ''.join(user_log[2:3])).group()
 						user_login_time = ''.join(user_log[3:4])
 						user_login_time = datetime.datetime.strptime(user_login_time, '%a %b %d %H:%M:%S %Y').strftime('%Y-%m-%d %H:%M:%S')
-						user_uptime = (datetime.datetime.now() - datetime.datetime.strptime(user_login_time,'%Y-%m-%d %H:%M:%S')).seconds
+						user_uptime = (datetime.datetime.now() - datetime.datetime.strptime(user_login_time,'%Y-%m-%d %H:%M:%S'))
+						user_uptime = user_uptime.days * 86400 + user_uptime.seconds
 						user_uptime = human_readable_time(user_uptime)
-						querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+						if username not in Onlinelist:
+							querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+						else:
+							querysetlist.append(OnlineUser.objects.filter(username = username).update(serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+	for i in OnlineUser.objects.all().values('username'):
+		print i['username']
+		print '---------'
+		if i['username'] not in TrueOnlineUserList:
+			querydeletelist.append(OnlineUser.objects.filter(username = i).delete())
+
 	try:
-		SubIp.objects.bulk_create(querysetlist)
+		#OnlineUser.objects.bulk_create(querydeletelist)
+		#OnlineUser.objects.bulk_create(querysetlist)
 		return 'Success'
 	except Exception, e:
-		return 'False'
+		return e
 
 
 if __name__ == "__main__":
-	sshexec()
+	sync()
