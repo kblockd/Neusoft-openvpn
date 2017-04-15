@@ -140,3 +140,7 @@ templates/
 vpn/__init__.pyc
 vpn/settings.pyc
 vpn/urls.pyc
+/openvpn/migrations/
+/openvpn/openvpn-status.log
+!/templates/
+.idea/dataSources.local.xml
