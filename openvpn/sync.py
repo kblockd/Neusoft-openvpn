@@ -1,7 +1,5 @@
 #-*-coding:utf-8-*-
-#import os,django
-#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vpn.settings")# project_name 项目名称
-#django.setup()
+
 import paramiko,re,datetime
 from openvpn.models import OnlineUser,ServerList
 
@@ -17,7 +15,7 @@ def human_readable_time(t):#时间转码
         return ("%dd %.2d:%.2d:%.2d" % (d,h,m,s))
 
 def sshclient_execmd(hostname, port, username, password, execmd):#创建ssh连接
-	paramiko.util.log_to_file("paramiko.log")
+	paramiko.util.log_to_file("/tmp/paramiko.log")
 
 	s = paramiko.SSHClient()
 	s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -41,7 +39,6 @@ def sync():#获取数据并整理
 	execmd = "cat /etc/openvpn/openvpn-status.log"
 
 	querysetlist = []
-	querydeletelist = []
 	Onlinelist = []
 	TrueOnlineUserList = []
 	for i in OnlineUser.objects.all().values('username'):
@@ -67,20 +64,14 @@ def sync():#获取数据并整理
 						if username not in Onlinelist:
 							querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
 						else:
-							querysetlist.append(OnlineUser.objects.filter(username = username).update(serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+							OnlineUser.objects.filter(username = username).update(serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime)
 	for i in OnlineUser.objects.all().values('username'):
-		print i['username']
-		print '---------'
 		if i['username'] not in TrueOnlineUserList:
-			querydeletelist.append(OnlineUser.objects.filter(username = i).delete())
+			OnlineUser.objects.filter(username = i['username']).delete()
 
 	try:
-		#OnlineUser.objects.bulk_create(querydeletelist)
-		#OnlineUser.objects.bulk_create(querysetlist)
+		OnlineUser.objects.bulk_create(querysetlist)
 		return 'Success'
 	except Exception, e:
 		return e
 
-
-if __name__ == "__main__":
-	sync()
