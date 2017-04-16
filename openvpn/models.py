@@ -97,3 +97,13 @@ class Radreply(models.Model):
     attribute = models.CharField(max_length=64)
     op = models.CharField(max_length=2)
     value = models.CharField(max_length=253)
+
+class Nas(models.Model):
+    nasname = models.CharField(max_length=128)
+    shortname = models.CharField(max_length=32)
+    type = models.CharField(max_length=30)
+    ports = models.IntegerField(blank=True, null=True)
+    secret = models.CharField(max_length=60)
+    server = models.CharField(max_length=64, blank=True, null=True)
+    community = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=200, blank=True, null=True)

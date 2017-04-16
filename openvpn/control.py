@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-from openvpn.models import RadUserList,RadAcct
+from openvpn.models import RadUserList,RadAcct,RadUserGroup
 import crypt,random,string
 
 def getsalt(chars=string.letters + string.digits):
@@ -9,13 +9,15 @@ def getsalt(chars=string.letters + string.digits):
 	r += '$'
 	return r
 
-def adduser(username,password):
+def adduser(username,password,group):
 	olduserlist = []
 	for i in RadUserList.objects.all().values('username'):
 		olduserlist.append(i['username'])
 	if username not in olduserlist:
 		password = crypt.crypt(password, getsalt())
-		RadUserList(username=username,attribute="Crypt-Password",op=':=',value=password)
+		RadUserList(username=username,attribute="Crypt-Password",op=':=',value=password).save()
+		RadUserGroup(username=username,groupname=group,priority=1).save()
+
 		return 'Success'
 	else:
 		return 'False'
@@ -37,6 +39,7 @@ def deluser(username):
 		olduserlist.append(i['username'])
 	if username in olduserlist:
 		RadUserList.objects.filter(username=username).delete()
+		RadUserGroup.objects.filter(username=username).delete()
 		return 'Success'
 	else:
 		return 'False'
@@ -79,6 +82,7 @@ def delserver(serverip):
 		return 'False'
 
 def status():
+	RadAcct.objects.all().values_list('username','groupname','nasipaddress','acctstarttime','acctstoptime','callingstationid','framedipaddress',)
 
 
 
