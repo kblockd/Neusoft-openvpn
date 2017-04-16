@@ -23,7 +23,7 @@ class OnlineUser(models.Model):
 	useruptime = models.CharField('在线时长',max_length=15,default="NULL")
 
 class UserLoginHistory(models.Model):
-	server = models.GenericIPAddressField('服务器ip',protocol='ipv4',unpack_ipv4=False)
+	serverip = models.GenericIPAddressField('服务器ip',protocol='ipv4',unpack_ipv4=False)
 	username = models.CharField('用户名', max_length=20, default="NULL")
 	fromip = models.GenericIPAddressField('来源ip', protocol='ipv4', unpack_ipv4=False)
 	indoorip = models.GenericIPAddressField('内部ip', protocol='ipv4', unpack_ipv4=False)
@@ -31,3 +31,13 @@ class UserLoginHistory(models.Model):
 	userlogouttime = models.CharField('下线时间', max_length=30, default="NULL")
 	useruptime = models.CharField('在线时长', max_length=10, default="NULL")
 
+class RadUserList(models.Model):
+	username = models.CharField('用户名',max_length=20,default="NULL")
+	attribute = models.CharField('认证', max_length=19, default="Cleartext-Password")
+	op = models.CharField('认证2', max_length=2, default=":=")
+	value = models.CharField('密码', max_length=64, default="NeusoftOpenVpn.Nss@A3-200OK")
+
+class RadGroupList(models.Model):
+	username = models.CharField('用户名',max_length=20,default="NULL")
+	groupname = models.CharField('组',max_length=20,default="vpnuser")
+	priority = models.IntegerField('priority',default=1)

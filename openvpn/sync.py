@@ -1,7 +1,8 @@
 #-*-coding:utf-8-*-
 
 import paramiko,re,datetime
-from openvpn.models import OnlineUser,ServerList
+from django.forms.models import model_to_dict
+from openvpn.models import OnlineUser,ServerList,UserLoginHistory
 
 def human_readable_time(t):#时间转码
     if t < 86400:
@@ -40,7 +41,9 @@ def sync():#获取数据并整理
 
 	querysetlist = []
 	Onlinelist = []
-	TrueOnlineUserList = []
+	TrueOnlineUserlist = []
+	Historylist = []
+
 	for i in OnlineUser.objects.all().values('username'):
 		Onlinelist.append(i['username'])
 	for host in hosts:
@@ -54,7 +57,7 @@ def sync():#获取数据并整理
 						user_log = line.strip().split(',')
 						client_addr = ''.join(user_log[:1])
 						username = ''.join(user_log[1:2])
-						TrueOnlineUserList.append(username)
+						TrueOnlineUserlist.append(username)
 						client_from_addr = re.search(r'\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}', ''.join(user_log[2:3])).group()
 						user_login_time = ''.join(user_log[3:4])
 						user_login_time = datetime.datetime.strptime(user_login_time, '%a %b %d %H:%M:%S %Y').strftime('%Y-%m-%d %H:%M:%S')
@@ -62,14 +65,19 @@ def sync():#获取数据并整理
 						user_uptime = user_uptime.days * 86400 + user_uptime.seconds
 						user_uptime = human_readable_time(user_uptime)
 						if username not in Onlinelist:
-							querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime))
+							querysetlist.append(OnlineUser(username = username,serverip=host,fromip=client_from_addr, \
+							                               indoorip=client_addr, userlogintime=user_login_time, useruptime=user_uptime))
 						else:
-							OnlineUser.objects.filter(username = username).update(serverip=host,fromip=client_from_addr,indoorip=client_addr,userlogintime=user_login_time,useruptime=user_uptime)
+							OnlineUser.objects.filter(username = username).update(serverip=host,fromip=client_from_addr, \
+							                                                      indoorip=client_addr, userlogintime=user_login_time, useruptime=user_uptime)
 	for i in OnlineUser.objects.all().values('username'):
-		if i['username'] not in TrueOnlineUserList:
+		if i['username'] in TrueOnlineUserlist:
+			k = model_to_dict(OnlineUser.objects.get(username = i['username']))
+			Historylist.append(UserLoginHistory(username=k['username'], serverip=k['serverip'], fromip=k['fromip'], indoorip=k['indoorip'], userlogintime=k['userlogintime'], userlogouttime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), useruptime=k['useruptime']))
 			OnlineUser.objects.filter(username = i['username']).delete()
 
 	try:
+		UserLoginHistory.objects.bulk_create(Historylist)
 		OnlineUser.objects.bulk_create(querysetlist)
 		return 'Success'
 	except Exception, e:
