@@ -32,8 +32,9 @@ def sshclient_execmd(hostname, port, username, password, execmd):#创建ssh连�
 
 def sync():#获取数据并整理
 	hosts = []
-	for i in ServerList.objects.all().values('serverip'):
-		hosts.append(i['serverip'])
+	for i in ServerList.objects.all().values('serverip','enable'):
+		if i['enable'] == True:
+			hosts.append(i['serverip'])
 	port = 22
 	syncname = 'root'
 	password = 'neusoft'
@@ -82,4 +83,3 @@ def sync():#获取数据并整理
 		return 'Success'
 	except Exception, e:
 		return e
-
