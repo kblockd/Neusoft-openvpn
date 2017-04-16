@@ -132,15 +132,11 @@ ENV/
 openvpn/__init__.pyc
 openvpn/admin.pyc
 openvpn/apps.pyc
-openvpn/migrations/0001_initial.py
 openvpn/migrations/0001_initial.pyc
 openvpn/migrations/__init__.pyc
 openvpn/models.pyc
-templates/
 vpn/__init__.pyc
 vpn/settings.pyc
 vpn/urls.pyc
-/openvpn/migrations/
 /openvpn/openvpn-status.log
-!/templates/
 .idea/dataSources.local.xml
