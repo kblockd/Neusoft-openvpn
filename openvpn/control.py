@@ -81,7 +81,18 @@ def delserver(serverip):
 	else:
 		return 'False'
 
+def addgroupuser(group,userlist):
+	InsertList = []
+	for i in list(set(userlist)):
+		InsertList.append(RadUserGroup(username=i,groupname=group,priority=1))
+	try:
+		RadUserGroup.objects.bulk_create(InsertList)
+		return 'Success'
+	except Exception,e:
+		return e
+
 def status():
+	from openvpn.models import RadAcct
 	Onlinelist = RadAcct.objects.all().filter(acctstopdelay = None).values('username','groupname','nasipaddress','acctstarttime','callingstationid','framedipaddress',)
 	return Onlinelist
 
