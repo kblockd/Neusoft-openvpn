@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-from openvpn.models import RadUserList,RadAcct,RadUserGroup
+from openvpn.models import RadUserList,RadUserGroup
 import crypt,random,string
 
 def getsalt(chars=string.letters + string.digits):
@@ -56,8 +56,9 @@ def addserver(serverip,serverdomain,enable):
 		password = 'neusoft'
 		execmd = ''
 		try:
-		#	sshclient_execmd(host, port, username, password, execmd)
-		except Exception,e:
+			print 1
+		#sshclient_execmd(host, port, username, password, execmd)
+		except Exception, e:
 			return e
 		ServerList(serverip=i['serverip'],serverdomain=serverdomain,enable=enable).save()
 	else:
@@ -74,6 +75,7 @@ def delserver(serverip):
 		password = 'neusoft'
 		execmd = ''
 		try:
+			print 1
 		#sshclient_execmd(host, port, username, password, execmd)
 		except Exception, e:
 			return e
@@ -93,7 +95,7 @@ def addgroupuser(group,userlist):
 
 def status():
 	from openvpn.models import RadAcct
-	Onlinelist = RadAcct.objects.all().filter(acctstopdelay = None).values('username','groupname','nasipaddress','acctstarttime','callingstationid','framedipaddress',)
+	Onlinelist = RadAcct.objects.all().filter(acctstopdelay=None).values('username', 'groupname', 'nasipaddress','acctstarttime', 'callingstationid','framedipaddress')
 	return Onlinelist
 
-def history():
+#def history():

@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^manage/status$',include('openvpn.urls')),
+    url(r'^manage/',include('openvpn.urls')),
 ]
