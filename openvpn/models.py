@@ -39,9 +39,11 @@ class UserLoginHistory(models.Model):
 	username = models.CharField('用户名', max_length=20, default="NULL")
 	fromip = models.GenericIPAddressField('来源ip', protocol='ipv4', unpack_ipv4=False)
 	indoorip = models.GenericIPAddressField('内部ip', protocol='ipv4', unpack_ipv4=False)
-	userlogintime = models.CharField('登录时间', max_length=50, default="NULL")
-	userlogouttime = models.CharField('下线时间', max_length=50, default="NULL")
-	useruptime = models.CharField('在线时长', max_length=10, default="NULL")
+	userlogintime = models.DateTimeField(blank=True, null=True)
+	userlogouttime = models.DateTimeField(blank=True, null=True)
+	inputoctets = models.BigIntegerField(blank=True, null=True)
+	outputoctets = models.BigIntegerField(blank=True, null=True)
+	useruptime = models.BigIntegerField(blank=True, null=True)
 
 class RadGroupCheck(models.Model):
     groupname = models.CharField(max_length=64)

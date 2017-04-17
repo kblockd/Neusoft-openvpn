@@ -82,8 +82,7 @@ def delserver(serverip):
 		return 'False'
 
 def status():
-	RadAcct.objects.all().values_list('username','groupname','nasipaddress','acctstarttime','acctstoptime','callingstationid','framedipaddress',)
+	Onlinelist = RadAcct.objects.all().filter(acctstopdelay = None).values('username','groupname','nasipaddress','acctstarttime','callingstationid','framedipaddress',)
+	return Onlinelist
 
-
-
-
+def history():
