@@ -95,6 +95,7 @@ def addgroupuser(group,userlist):
 
 def status():
 	from openvpn.models import RadAcct
+	print RadAcct.objects.all().filter(acctstopdelay=None).values('acctstarttime')
 	Onlinelist = RadAcct.objects.all().filter(acctstopdelay=None).values('username', 'groupname', 'nasipaddress','acctstarttime', 'callingstationid','framedipaddress')
 	return Onlinelist
 
