@@ -1,0 +1,74 @@
+{% extends "openvpn/base.html" %}
+
+{% block main %}
+
+	    <div class="page-header">
+		    <h1>在线用户</h1>
+	    </div>
+	    <table class="table" id="vm">
+        <thead>
+		   <tr>
+        <th>服务器</th>
+        <th>用户名</th>
+        <th>组</th>
+        <th>来源ip</th>
+        <th>内部ip</th>
+        <th>登录时间</th>
+        <th>在线时长</th>
+           </tr>
+        </thead>
+        <tbody>
+    {% for line in status %}
+        <tr>
+            <td>{{line.nasipaddress}}</td>
+            <td>{{line.username}}</td>
+            <td>{{line.groupname}}</td>
+            <td>{{line.callingstationid}}</td>
+            <td>{{line.framedipaddress}}</td>
+            <td>{{line.acctstarttime|date:"Y-m-d H:i:s"}}</td>
+            <td></td>
+        </tr>
+    {% endfor %}
+        </tbody>
+		</table>
+
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+  {% for page_number in status.paginator.page_range %}
+    {% ifequal page_number  status.number %}
+       <li class="active"><a>{{ page_number }}</a></li>
+    {% else %}
+        <li><a href="?page={{ page_number }}">{{ page_number }}</a></li>
+    {% endifequal %}
+  {% endfor %}
+      </ul>
+    </nav>
+
+
+ <script type="text/javascript">
+        function human_readable_time(tmpdate) {
+            var now=new Date();
+            var tmpArray=tmpdate.split(" ");
+            var tmpYMD=tmpArray[0].split("-");
+            var tmptime=tmpArray[1].split(":");
+            var logindate=new Date(now.getYear()-tmpYMD[0],
+                now.getMonth()-(tmpYMD[1]-parseInt(1)),
+                now.getDay()-tmpYMD[2],
+                now.getHours()-tmptime[0],
+                now.getMinutes()-tmptime[1],
+                now.getSeconds()-tmptime[2]);
+            return logindate;
+        }
+        function uptime() {
+            $("table tr:gt(0)").each(
+                function() {
+                    $(this).children('td:eq(6)').html(human_readable_time($(this).children('td:eq(5)').text()));
+                });
+            t=setTimeout('uptime()',1000);
+        }
+        $(function(){
+            uptime();
+        })
+</script>
+
+{% endblock %}

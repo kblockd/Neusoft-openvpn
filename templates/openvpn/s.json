@@ -1,0 +1,1 @@
+[{"username": "test", "framedipaddress": "10.10.0.2", "callingstationid": "172.24.5.100", "acctstarttime": "2017-04-18T19:27:09", "nasipaddress": "172.17.4.42", "groupname": "user"}, {"username": "magic", "framedipaddress": "10.10.0.3", "callingstationid": "172.17.4.40", "acctstarttime": "2017-04-18T19:27:34", "nasipaddress": "172.17.4.42", "groupname": "user"}]
