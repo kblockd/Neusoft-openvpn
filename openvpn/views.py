@@ -31,4 +31,4 @@ def delguser(request):
 	return render(request, 'openvpn/action.html', {'action': request.POST['action'].encode('utf-8')},content_type='text/html')
 
 def delgroup(request):
-	return render(request, 'openvpn/actioin.html', {'action': request.POST['action'].encode('utf-8')},content_type='text/html')
+	return render(request, 'openvpn/action.html', {'action': request.POST['action'].encode('utf-8')},content_type='text/html')
