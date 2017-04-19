@@ -1,0 +1,68 @@
+{% extends "openvpn/base.html" %}
+
+{% block main %}
+	    <div class="page-header">
+		    <h1>批量添加用户</h1>
+	    </div>
+	    <form action="" method="post">
+        {% csrf_token %}
+		  <div class="form-group">
+		    <label for="username">用户名</label>
+		    <input type="text" name="username" class="form-control" id="username">
+		  </div>
+		  <div class="form-group">
+		    <label for="password">Password</label>
+		    <input type="password" name="password" class="form-control" id="password">
+		  </div>
+		  <div class="form-group">
+		    <label for="groupname">group</label>
+              <input type="text" name="groupname" class="form-control" id="groupname" placeholder="user">
+{#		    <select class="form-control" id="usergroup">#}
+{#              <option selected value="c">123213</option>#}
+{#              <option value="">请输入</option>#}
+{#            </select>#}
+		  </div>
+{#		  <div class="checkbox">#}
+{#		    <label>#}
+{#		      <input type="checkbox"> Check me out#}
+{#		    </label>#}
+{#		  </div>#}
+		  <button type="submit" class="btn btn-default">Submit</button>
+		</form>
+    {% if messages %}
+
+<ulclass="messages">
+
+    {% for message in messages %}
+
+    <li{%if message.tags %} class="{{ message.tags }}"{% endif %}>{{message }}</li>
+
+    {%endfor %}
+
+{% endif %}
+    <script>
+        $('#usergroup').select2();
+{#    function editable(select1){#}
+{#       if(select1.value == ""){#}
+{#          var newvalue = prompt("请输入","其他");#}
+{#          if(newvalue){#}
+{#             addSelected(select1,newvalue,newvalue);#}
+{#          }#}
+{#       }#}
+{#    }#}
+{#    function addSelected(fld1,value1,text1){#}
+{#        if (document.all)    {#}
+{#                var Opt = fld1.document.createElement("OPTION");#}
+{#                Opt.text = text1;#}
+{#                Opt.value = value1;#}
+{#                fld1.options.add(Opt);#}
+{#                Opt.selected = true;#}
+{#        }else{#}
+{#                var Opt = new Option(text1,value1,false,false);#}
+{#                Opt.selected = true;#}
+{#                fld1.options[fld1.options.length] = Opt;#}
+{#        }#}
+{#    }#}
+
+    </script>
+{% endblock %}
